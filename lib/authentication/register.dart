@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:foodpanda_sellers_app/widgets/custom_text_field.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -25,11 +27,28 @@ class _RegisterState extends State<Register> {
   XFile? imageXFile;
   final ImagePicker _picker = ImagePicker();
 
+  Position? position;
+  List<Placemark>? placemarks;
+
   Future<void> _getImage() async {
     imageXFile = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
       imageXFile;
     });
+  }
+
+  getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+
+    Placemark pMark = placemarks![0];
+
+    String completeAddress =
+        '${pMark.subThoroughfare} ${pMark.thoroughfare}, ${pMark.subLocality} ${pMark.locality}, ${pMark.subAdministrativeArea}, ${pMark.administrativeArea} ${pMark.postalCode}, ${pMark.country}';
+    locationController.text = completeAddress;
   }
 
   @override
@@ -97,7 +116,9 @@ class _RegisterState extends State<Register> {
                   height: 40,
                   alignment: Alignment.center,
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      getCurrentLocation();
+                    },
                     icon: const Icon(
                       Icons.location_on_outlined,
                       color: Colors.white,

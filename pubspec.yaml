@@ -31,6 +31,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
+  geocoding: ^2.0.5
   geolocator: ^9.0.2
   image_picker: ^0.8.6+4
   velocity_x: ^3.6.0
